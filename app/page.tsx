@@ -49,7 +49,13 @@ export default function HomePage() {
 
       {isLoadingUsers && <p>Loading users...</p>}
       {isErrorUsers && <p className="text-red-500">Error fetching users.</p>}
-      {users && <UserList users={users} onSelect={setSelectedUser} />}
+      {users ? (
+        users.length > 0 ? (
+          <UserList users={users} onSelect={setSelectedUser} />
+        ) : (
+          <p>No users found</p>
+        )
+      ) : null}
 
       {selectedUser && (
         <section className="mt-6">

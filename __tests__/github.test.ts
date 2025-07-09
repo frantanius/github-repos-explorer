@@ -1,21 +1,20 @@
 import { fetchUsers, fetchUserRepos } from "@/lib/github";
 
-global.fetch = jest.fn();
+beforeAll(() => {
+  fetchMock.doMock();
+});
+
+beforeEach(() => {
+  fetchMock.resetMocks();
+});
 
 describe("GitHub API", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
-
   it("should fetch users successfully", async () => {
-    const mockUsers = {
-      items: [{ login: "octocat", id: 1, avatar_url: "https://avatar" }],
-    };
-
-    (fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockUsers,
-    });
+    fetchMock.mockResponseOnce(
+      JSON.stringify({
+        items: [{ login: "octocat", id: 1, avatar_url: "https://avatar" }],
+      })
+    );
 
     const users = await fetchUsers("octo");
     expect(users).toHaveLength(1);
@@ -23,22 +22,19 @@ describe("GitHub API", () => {
   });
 
   it("should fetch repos successfully", async () => {
-    const mockRepos = [
-      {
-        id: 1,
-        name: "repo1",
-        html_url: "#",
-        description: "",
-        stargazers_count: 5,
-        forks_count: 2,
-        language: "JS",
-      },
-    ];
-
-    (fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockRepos,
-    });
+    fetchMock.mockResponseOnce(
+      JSON.stringify([
+        {
+          id: 1,
+          name: "repo1",
+          html_url: "#",
+          description: "",
+          stargazers_count: 5,
+          forks_count: 2,
+          language: "JS",
+        },
+      ])
+    );
 
     const repos = await fetchUserRepos("octocat");
     expect(repos).toHaveLength(1);
@@ -46,10 +42,7 @@ describe("GitHub API", () => {
   });
 
   it("should throw error when users fetch fails", async () => {
-    (fetch as jest.Mock).mockResolvedValueOnce({
-      ok: false,
-      statusText: "Bad Request",
-    });
+    fetchMock.mockRejectOnce(new Error("Error fetching users: Bad Request"));
 
     await expect(fetchUsers("octo")).rejects.toThrow(
       "Error fetching users: Bad Request"
@@ -57,10 +50,9 @@ describe("GitHub API", () => {
   });
 
   it("should throw error when repos fetch fails", async () => {
-    (fetch as jest.Mock).mockResolvedValueOnce({
-      ok: false,
-      statusText: "Not Found",
-    });
+    fetchMock.mockRejectOnce(
+      new Error("Error fetching repositories for unknown: Not Found")
+    );
 
     await expect(fetchUserRepos("unknown")).rejects.toThrow(
       "Error fetching repositories for unknown: Not Found"
