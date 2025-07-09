@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
@@ -32,6 +33,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
     "jest": "^30.0.4",
+    "jest-environment-jsdom": "^30.0.4",
     "msw": "^2.10.3",
     "tailwindcss": "^4",
     "ts-jest": "^29.4.0",
