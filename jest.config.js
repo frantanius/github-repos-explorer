@@ -7,7 +7,7 @@ module.exports = {
     "\\.(css|less|scss|sass)$": "identity-obj-proxy",
   },
   transform: {
-    "^.+\\.(ts|tsx|js|jsx)$": "babel-jest",
+    "^.+\\.(t|j)sx?$": ["babel-jest", { configFile: "./babel.config.test.js" }],
   },
   testMatch: ["**/__tests__/**/*.(test|spec).(ts|tsx)"],
   clearMocks: true,
