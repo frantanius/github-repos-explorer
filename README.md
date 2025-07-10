@@ -4,7 +4,7 @@ A simple, responsive web app built with **Next.js**, **React Query**, and **shad
 
 ## 🖼️ Preview
 
-Live Preview → [https://github-explorer.vercel.app](https://github-explorer.vercel.app)
+Live Preview → [https://github-repos-explorer-sigma.vercel.app](https://github-repos-explorer-sigma.vercel.app)
 
 ## 🚀 Getting Started
 
