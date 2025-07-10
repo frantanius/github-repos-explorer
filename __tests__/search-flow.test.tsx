@@ -1,11 +1,11 @@
+import React from "react";
+import fetchMock from "jest-fetch-mock";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import React from "react";
+
 import HomePage from "@/app/page";
 import { ReactQueryProvider } from "@/components/providers/react-query-provider";
-import fetchMock from "jest-fetch-mock";
 
-// Aktifkan fetch mock
 beforeAll(() => {
   fetchMock.enableMocks();
 });
@@ -22,12 +22,10 @@ test("should search and show users", async () => {
         {
           login: "octocat",
           id: 1,
-          avatar_url: "https://avatars.githubusercontent.com/u/1?v=4",
         },
         {
           login: "devcat",
           id: 2,
-          avatar_url: "https://avatars.githubusercontent.com/u/2?v=4",
         },
       ],
     })
@@ -39,7 +37,7 @@ test("should search and show users", async () => {
     </ReactQueryProvider>
   );
 
-  const input = screen.getByPlaceholderText("Search GitHub username");
+  const input = screen.getByPlaceholderText("Enter username");
   const button = screen.getByRole("button", { name: /search/i });
 
   await userEvent.type(input, "octo");
@@ -51,14 +49,12 @@ test("should search and show users", async () => {
 });
 
 test("should show repositories when user is clicked", async () => {
-  // Step 1: mock fetchUsers
   fetchMock.mockResponseOnce(
     JSON.stringify({
       items: [
         {
           login: "octocat",
           id: 1,
-          avatar_url: "https://avatars.githubusercontent.com/u/1?v=4",
         },
       ],
     })
@@ -70,7 +66,7 @@ test("should show repositories when user is clicked", async () => {
     </ReactQueryProvider>
   );
 
-  const input = screen.getByPlaceholderText("Search GitHub username");
+  const input = screen.getByPlaceholderText("Enter username");
   const button = screen.getByRole("button", { name: /search/i });
 
   await userEvent.type(input, "octo");
@@ -78,7 +74,6 @@ test("should show repositories when user is clicked", async () => {
 
   const octocatItem = await screen.findByText("octocat");
 
-  // Step 2: mock fetchUserRepos (dipanggil saat user diklik)
   fetchMock.mockResponseOnce(
     JSON.stringify([
       {
@@ -87,8 +82,6 @@ test("should show repositories when user is clicked", async () => {
         html_url: "#",
         description: "My cool repo",
         stargazers_count: 42,
-        forks_count: 7,
-        language: "TypeScript",
       },
     ])
   );
@@ -108,7 +101,7 @@ test("should handle no users found", async () => {
     </ReactQueryProvider>
   );
 
-  const input = screen.getByPlaceholderText("Search GitHub username");
+  const input = screen.getByPlaceholderText("Enter username");
   const button = screen.getByRole("button", { name: /search/i });
 
   await userEvent.type(input, "nonexistentuser");
