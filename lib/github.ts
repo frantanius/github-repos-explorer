@@ -1,7 +1,6 @@
 export interface GitHubUser {
   login: string;
   id: number;
-  avatar_url: string;
 }
 
 export interface GitHubRepo {
@@ -10,33 +9,41 @@ export interface GitHubRepo {
   html_url: string;
   description: string;
   stargazers_count: number;
-  forks_count: number;
-  language: string | null;
 }
 
-/**
- * Search GitHub users based on query (max 5 results)
- */
-export async function fetchUsers(query: string): Promise<GitHubUser[]> {
-  const res = await fetch(
-    `https://api.github.com/search/users?q=${query}&per_page=5`
-  );
-  if (!res.ok) {
-    throw new Error(`Error fetching users: ${res.statusText}`);
-  }
-  const data = await res.json();
-  return data.items as GitHubUser[];
-}
+// --------------------
+// GitHub API Endpoints
+// --------------------
+const GITHUB_API_BASE = "https://api.github.com";
 
-/**
- * Get repositories for a specific GitHub user
- */
-export async function fetchUserRepos(username: string): Promise<GitHubRepo[]> {
-  const res = await fetch(`https://api.github.com/users/${username}/repos`);
+const githubUrls = {
+  searchUsers: (query: string) =>
+    `${GITHUB_API_BASE}/search/users?q=${encodeURIComponent(query)}&per_page=5`,
+  userRepos: (username: string) =>
+    `${GITHUB_API_BASE}/users/${encodeURIComponent(username)}/repos`,
+};
+
+// ------------------------
+// Generic Fetch Helper
+// ------------------------
+async function fetchFromGitHub<T>(url: string): Promise<T> {
+  const res = await fetch(url);
   if (!res.ok) {
-    throw new Error(
-      `Error fetching repositories for ${username}: ${res.statusText}`
-    );
+    throw new Error(`GitHub API error: ${res.statusText}`);
   }
   return res.json();
+}
+
+// ------------------------
+// Public API Functions
+// ------------------------
+export async function fetchUsers(query: string): Promise<GitHubUser[]> {
+  const url = githubUrls.searchUsers(query);
+  const data = await fetchFromGitHub<{ items: GitHubUser[] }>(url);
+  return data.items;
+}
+
+export async function fetchUserRepos(username: string): Promise<GitHubRepo[]> {
+  const url = githubUrls.userRepos(username);
+  return fetchFromGitHub<GitHubRepo[]>(url);
 }

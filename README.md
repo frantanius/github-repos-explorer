@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GitHub Repositories Explorer
 
-## Getting Started
+A simple, responsive web app built with **Next.js**, **React Query**, and **shadcn/ui**, allowing users to search for GitHub users and view their public repositories.
 
-First, run the development server:
+## 🖼️ Preview
+
+Live Preview → [https://github-explorer.vercel.app](https://github-explorer.vercel.app)
+
+## 🚀 Getting Started
+
+### 1. Clone the project
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/frantanius/github-repos-explorer.git
+cd github-repos-explorer
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install dependencies (using pnpm)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+If you don't have `pnpm` installed:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install -g pnpm
+```
 
-## Learn More
+Then install dependencies:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm install
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Run locally
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm dev
+```
 
-## Deploy on Vercel
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 4. Run tests
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm test
+```
+
+
+## 🛠️ Folder Structure
+
+```
+.
+├── components/
+│   ├── ui/                 # Shadcn-based UI components
+│   ├── providers/          # React Query Provider
+│   ├── UserAccordionItem.tsx
+│   ├── SearchInput.tsx
+│   ├── Skeletons.tsx
+│   └── UserRepoList.tsx
+├── lib/
+│   └── github.ts           # GitHub API helpers
+├── app/
+│   ├── page.tsx            # Homepage
+│   └── layout.tsx
+├── styles/
+│   └── globals.css
+└── ...
+```
+
+## 🔐 API Rate Limiting
+
+GitHub’s API is rate-limited for unauthenticated requests (60 requests/hour).
+For higher limits, you can modify `fetchUsers` and `fetchUserRepos` in `lib/github.ts` to use a GitHub token.
+
+## 📦 Tech Stack
+
+* [Next.js](https://nextjs.org/)
+* [React](https://react.dev/)
+* [Tailwind CSS](https://tailwindcss.com/)
+* [React Query](https://tanstack.com/query/latest)
+* [shadcn/ui](https://ui.shadcn.dev/)
+* [Zod](https://zod.dev/)
+* [React Hook Form](https://react-hook-form.com/)
+* [GitHub REST API](https://docs.github.com/en/rest)

@@ -2,73 +2,68 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchUsers, fetchUserRepos, GitHubUser } from "@/lib/github";
+import { fetchUsers } from "@/lib/github";
+import { Accordion } from "@/components/ui/accordion";
+import { UserSkeleton } from "@/components/Skeletons";
 import SearchInput from "@/components/SearchInput";
-import UserList from "@/components/UserList";
-import RepoList from "@/components/RepoList";
+import UserAccordionItem from "@/components/UserAccordionItem";
 
 export default function HomePage() {
   const [query, setQuery] = useState("");
-  const [selectedUser, setSelectedUser] = useState<GitHubUser | null>(null);
 
   const {
     data: users,
-    isLoading: isLoadingUsers,
-    isError: isErrorUsers,
-    refetch: refetchUsers,
+    isLoading,
+    isError,
   } = useQuery({
     queryKey: ["search-users", query],
     queryFn: () => fetchUsers(query),
-    enabled: false,
+    enabled: !!query, // only run if query is non-empty
   });
 
-  const {
-    data: repos,
-    isLoading: isLoadingRepos,
-    isError: isErrorRepos,
-  } = useQuery({
-    queryKey: ["user-repos", selectedUser?.login],
-    queryFn: () => fetchUserRepos(selectedUser!.login),
-    enabled: !!selectedUser,
-  });
-
-  const handleSearch = () => {
-    setSelectedUser(null);
-    if (query.trim()) {
-      refetchUsers();
-    }
+  const handleSearch = (newQuery: string) => {
+    setQuery(newQuery.trim());
   };
 
   return (
-    <main className="max-w-2xl mx-auto p-4 space-y-6">
-      <SearchInput
-        query={query}
-        onQueryChange={setQuery}
-        onSearch={handleSearch}
-      />
+    <main className="max-w-xl mx-auto p-4 space-y-6 bg-white">
+      <SearchInput onSearch={handleSearch} />
 
-      {isLoadingUsers && <p>Loading users...</p>}
-      {isErrorUsers && <p className="text-red-500">Error fetching users.</p>}
-      {users ? (
-        users.length > 0 ? (
-          <UserList users={users} onSelect={setSelectedUser} />
-        ) : (
-          <p>No users found</p>
-        )
-      ) : null}
+      {/* Loading Search */}
+      {isLoading && (
+        <div className="space-y-3">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <UserSkeleton key={i} />
+          ))}
+        </div>
+      )}
 
-      {selectedUser && (
-        <section className="mt-6">
-          <h2 className="text-lg font-semibold mb-2">
-            Repositories for {selectedUser.login}
-          </h2>
+      {/* Error Search */}
+      {!isLoading && isError && (
+        <p className="text-red-500 text-sm" role="alert">
+          Error fetching users. Please try again.
+        </p>
+      )}
 
-          {isLoadingRepos && <p>Loading repositories...</p>}
-          {isErrorRepos && (
-            <p className="text-red-500">Error fetching repos.</p>
-          )}
-          {repos && <RepoList repos={repos} />}
-        </section>
+      {/* No Result Search */}
+      {!isLoading && users && users.length === 0 && (
+        <p className="text-sm text-muted-foreground">
+          No users found for <strong>{query}</strong>.
+        </p>
+      )}
+
+      {/* Result Search */}
+      {!isLoading && users && users.length > 0 && (
+        <>
+          <p className="text-sm text-muted-foreground">
+            Showing users for <strong>{query}</strong>
+          </p>
+          <Accordion type="single" collapsible className="space-y-3">
+            {users.map((user) => (
+              <UserAccordionItem key={user.id} user={user} />
+            ))}
+          </Accordion>
+        </>
       )}
     </main>
   );

@@ -13,6 +13,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const fontClass = `${geistSans.variable} ${geistMono.variable}`;
+
 export const metadata: Metadata = {
   title: "GitHub Repositories Explorer",
   description: "Find GitHub users and their repositories",
@@ -26,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${fontClass} antialiased min-h-screen bg-background text-foreground`}
       >
         <ReactQueryProvider>{children}</ReactQueryProvider>
       </body>
